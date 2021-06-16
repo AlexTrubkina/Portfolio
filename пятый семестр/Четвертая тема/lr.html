@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="form-group">
+        <label for="messages">Messages</label>
+        <textarea class="form-control" id="messages"></textarea>
+    </div>
+    <div>
+        <form id="myform" method="POST">
+            <div class="form-group">
+                <label for="InputMessage">Your message</label>
+                <input type="text" class="form-control" id="InputMessage" placeholder="Type...">
+            </div>
+            <div class="field">
+                <div class="control">
+                      <button type="submit" class="btn btn-primery">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"> </script>
+    <script>
+        $(function() {
+        console.log( "ready!" );
+        let webSocket = new WebSocket('ws://localhost:8888/websocket');
+
+        webSocket.onopen = event => {
+          console.log('onopen');
+
+        };
+
+        webSocket.onmessage = event => {
+            $('#messages').append(event.data+"\n");
+            console.log('onmessage, ' + event.data);
+        };
+
+        webSocket.onclose = event => {
+            console.log('onclose');
+        };
+
+        $('#myform').submit(function(event) {
+          const msgtxt = document.querySelector('#InputMessage').value;
+          const data = "Message : " + msgtxt;
+          console.log('Send new message');
+          webSocket.send(data);
+
+          event.preventDefault();
+        });
+
+
+    });
+    </script>
+</body>
+</html>
